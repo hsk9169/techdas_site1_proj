@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-box row" style="width: 100%; margin-left: 0; margin-right: 0;">
+    <span class="content-row" style="width: 50%; height: 100%;">
+        {% include "setting/data_filter_form.html" %}
+        <div style="width: 100%; display: flex; justify-content: end; padding-top: 2%;">
+            <button type="button" class="btn btn-light" style="width: 15%; padding: 0.2%;"
+                onclick="onClickSubmitDataFilter()">
+                <b style='font-size: 2vh;'>적용</b>
+            </button>
+        </div>
+    </span>
+    <div class="vl-box">
+        <div class="vl"></div>
+    </div>
+    <span class="content-row" style="width: 50%; height: 100%;">
+        <div class="column-box" style="justify-content: flex-start;">
+            {% include "setting/o2_co_limit_form.html" %}
+            <div style="width: 100%; display: flex; justify-content: end; padding-top: 2%;">
+                <button type="button" class="btn btn-light" style="width: 15%; padding: 0.2%;"
+                    onclick="onClickSubmitO2COLimit()">
+                    <b style='font-size: 2vh;'>적용</b>
+                </button>
+            </div>
+        </div>
+    </span>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="">
+    sel = {{ num_machine|tojson }}
+</script>
+<script type="text/javascript" src="/static/js/setting.js"></script>
+{% endblock %}

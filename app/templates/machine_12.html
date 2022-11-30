@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-box row" style="width: 100%; margin-left: 0; margin-right: 0;">
+  <span class="content-row" style="width: 35%; height: 100%;">
+    <div class="column-box" style="justify-content: flex-start;">
+      {% include "machine/o2_controller_state_table.html" %}
+      {% include "machine/performance_monitoring.html" %}
+    </div>
+  </span>
+  <span class="content-row" style="width: 65%; height: 100%; padding: 0;">
+    <div class="column-box" style="justify-content: flex-start;">
+      
+      <div class="row" style="width: 100%; height: 30%; display: flex; margin: 0;">
+        <div class="content-row" style="width: 60%; height: 100%;">
+          {% include "machine/tdls_status_table.html" %}
+        </div>
+        <div class="content-row" style="width: 40%; height: 100%; padding-left: 0;">
+          {% include "machine/o2_co_histogram.html" %}
+        </div>
+      </div>
+      <div style="width: 100%; height: 40%; padding-left: 2vh; padding-right: 2vh;">
+        {% include "machine/machine_overall_image_12.html" %}
+      </div>
+      <div class="row" style="width: 100%; height: 25%; display: flex; margin: 0; padding-top: 2vh;">
+        <span class="content-row" style="width: 50%;">
+          <div style="width: 100%; display: flex; justify-content: start; padding-bottom: 1vh;">
+            <select class="form-select" onchange="onSelectChart(this.selectedIndex, this.options[this.selectedIndex].text, 1)">
+              <option value="1" selected>===== 선택 =====</option>
+              <option value="2">예열대 상부 O2</option>
+              <option value="3">예열대 하부 O2</option>
+              <option value="4">예열대 상부 CO</option>
+              <option value="5">균열대 하부 O2</option>
+              <option value="6">Stack O2</option>
+            </select>
+          </div>
+          {% include "machine/selected_chart_1.html" %}
+        </span>
+        <span class="content-row" style="width: 50%;">
+          <div style="width: 100%; display: flex; justify-content: start; padding-bottom: 1vh;">
+            <select class="form-select" onchange="onSelectChart(this.selectedIndex, this.options[this.selectedIndex].text, 2)">
+              <option value="1" selected>===== 선택 =====</option>
+              <option value="2">예열대 상부 O2</option>
+              <option value="3">예열대 하부 O2</option>
+              <option value="4">예열대 상부 CO</option>
+              <option value="5">균열대 하부 O2</option>
+              <option value="6">Stack O2</option>
+            </select>
+          </div>
+          {% include "machine/selected_chart_2.html" %}
+        </span>
+      </div>
+    </div>
+  </span>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="">
+  sel = {{ num_machine|tojson }}
+</script>
+<script type="text/javascript" src="/static/js/machine.js"></script>
+{% endblock %}

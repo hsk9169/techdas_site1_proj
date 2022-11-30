@@ -1,0 +1,45 @@
+{% block header %}
+<div id="topheader">
+  <nav class="navbar navbar-inverse navbar-fixed-top" style="min-height: 0;">
+    <div id="navbar collapse navbar-collapse" class="header-box">
+      <ul class="nav navbar-nav header-row" style="justify-content:start;">
+        <li>
+          <a class="text-other" style="background-color: transparent;" 
+            href={{ url_for('render_main_page') }}>Main</a>
+        </li>
+        <li>
+          <a class="text-other" style="background-color: transparent;" 
+            href={{ url_for('render_machine_page', num_machine=1) }}>0호기</a>
+        </li>
+        <li>
+          <a class="text-other" style="background-color: transparent;" 
+            href={{ url_for('render_machine_page', num_machine=2) }}>1호기</a>
+        </li>
+        <li>
+          <a class="text-other" style="background-color: transparent;" 
+            href={{ url_for('render_machine_page', num_machine=3) }}>2호기</a>
+        </li>
+        <li>
+          <a class="text-other" style="background-color: transparent;" 
+            href={{ url_for('render_machine_page', num_machine=4) }}>3호기</a>
+        </li>
+        <li id="sensor_nav">
+        </li>
+        <li id="setting_nav">
+        </li>
+      </ul>
+      <span class="navbar-text header-row">
+        <b id="text-title" class="text-title">1열연 가열로 가상센서 시스템</b>
+      </span>
+      <span class="navbar-text header-row" style="justify-content:end;">
+        <b id="realtime" class="text-other"></b>
+      </span>
+    </div>
+  </nav>
+</div>
+{% endblock %}
+
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/header.css">
+{% endblock %}

@@ -1,0 +1,21 @@
+.header-box {
+    display: flex;
+    height: 5vh;
+    justify-content: start;
+    align-items: center;
+}
+
+.header-row {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+
+.text-title {
+    color: white;
+    font-size: 2vh;
+}
+
+.text-other {
+    font-size: 1.5vh;
+}

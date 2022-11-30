@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content-box row" style="width: 100%; margin-left: 0; margin-right: 0;">
+    <span class="content-row" style="width: 50%; height: 100%;">
+      <div class="column-box">
+        {% include "main/tdls_status_table.html" %}
+        {% include "main/analyzer_seva_chart.html" %}
+        {% include "main/analyzer_seva_table.html" %}
+      </div>
+    </span>
+    <div class="vl-box">
+        <div class="vl"></div>
+    </div>
+    <span class="content-row" style="width: 50%; height: 100%;">
+      <div class="column-box">
+        {% include "main/fault_detection_table.html" %}
+        <div style="width: 100%; display: flex; justify-content: end">
+          <select class="form-select">
+            <option value="1" selected>1호기</option>
+            <option value="2">2호기</option>
+            <option value="3">3호기</option>
+            <option value="4">4호기</option>
+          </select>
+        </div>
+        {% include "main/fault_status_table.html" %}
+        {% include "main/analyzer_seva_graph.html" %}
+      </div>
+    </span>
+</div>
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/main.css">
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="/static/js/main.js"></script>
+{% endblock %}

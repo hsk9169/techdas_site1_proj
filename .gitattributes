@@ -1,0 +1,4 @@
+DB/HS_F3.db filter=lfs diff=lfs merge=lfs -text
+DB/HS_F4.db filter=lfs diff=lfs merge=lfs -text
+DB/HS_F1.db filter=lfs diff=lfs merge=lfs -text
+DB/HS_F2.db filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-box" style="width: 100%;">
+    <div class="column-box" style="justify-content: center; align-items: center">
+        <div style="width: 100%; display: flex; justify-content: end">
+            <button type="button" class="btn btn-light btn-sm" style="width: 6%; padding: 0.2%;"
+                onclick="onClickBack()">
+                <b>Back</b>
+            </button>
+        </div>
+        {% include "sensor/data_table.html" %}
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="">
+    sel = {{ num_machine|tojson }}
+</script>
+<script type="text/javascript" src="/static/js/sensor.js"></script>
+{% endblock %}
