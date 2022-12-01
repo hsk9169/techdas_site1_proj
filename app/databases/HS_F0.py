@@ -345,6 +345,26 @@ class raw_data:
         data['X46'] = float(row[23])
         return data
 
+    def get_temp(filter_date):
+        query = cur.execute(f""" \
+                SELECT DateTime, X2, X4, X6, X8, X10, X12, X14 \
+                FROM raw_data \
+                WHERE DateTime LIKE '{filter_date}' \
+                """)
+
+        row = query.fetchall()[0]
+
+        data = {}
+        data['DateTime'] = row[0]
+        data['X2'] = float(row[1])
+        data['X4'] = float(row[2])
+        data['X6'] = float(row[3])
+        data['X8'] = float(row[4])
+        data['X10'] = float(row[5])
+        data['X12'] = float(row[6])
+        data['X14'] = float(row[7])
+        return data
+
 class sensor_pred:
     def get_latest(filter_date):
         query = cur.execute(f""" \

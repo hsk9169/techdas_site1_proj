@@ -1,8 +1,8 @@
 from app import app
 from flask import jsonify, render_template, request, flash
-from .databases import HS_F0, HS_F1, HS_F3 
+from .databases import HS_F0, HS_F1, HS_F2, HS_F3 
 
-db = [HS_F0, HS_F1, HS_F1, HS_F3]
+db = [HS_F0, HS_F1, HS_F2, HS_F3]
 
 @app.route('/main')
 def render_main_page():
@@ -223,6 +223,16 @@ def get_raw_data_sensor():
     filter_date = parameter_dict['date_time']
 
     data = db[int(sel_machine) - 1].raw_data.get_sensor(filter_date)
+    return jsonify(data=data)
+
+@app.route('/data/raw_data_temp')
+def get_raw_data_temp():
+    parameter_dict = request.args.to_dict()
+    sel_machine = parameter_dict['num_machine']
+    filter_date = parameter_dict['date_time']
+    print(sel_machine)
+
+    data = db[int(sel_machine) - 1].raw_data.get_temp(filter_date)
     return jsonify(data=data)
 
 @app.route('/data/sensor_pred')

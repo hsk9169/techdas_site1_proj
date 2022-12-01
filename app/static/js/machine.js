@@ -15,6 +15,7 @@ var analyzer_pred_data
 var raw_data_tdls_data
 var analyzer_status_data
 var analyzer_normal_ratio_data
+var raw_data_temp_data
 
 var chart1_sel = 0, chart2_sel = 0
 
@@ -102,55 +103,311 @@ function makeAirRatioTableRows() {
     }
 }
 
-function makeMachineDataTableRows() {
+function makeMachineDataTableRows(num) {
     for (row=1 ; row<=8 ; row++) {
         $('#machine-data-table').append('<tr style="width: 100%">')
-        for (col=1 ; col<=12 ; col++) {
-            if (col == 1 || col == 4 || col == 11) {
+        for (col=1 ; col<=13 ; col++) {
+            if (col == 1) {
                 $('#machine-data-table').append(`
-                    <td id=machineData${col}${row} class="table-row" style="width: 13%; height: 12.5%; padding: 0; vertical-align: middle; font-size: 0.8vh;"></td>
+                    <td class="table-row" style="width: 10%; height: 12.5%; padding: 0; vertical-align: middle; font-size: 0.8vh;"><b id=machineData${col}${row} style="color: #00B050"></b><b id=machineDataUnit${col}${row}></b></td>
                 `)
             } else {
                 $('#machine-data-table').append(`
-                    <td id=machineData${col}${row} class="table-row" style="width: 6.5%; height: 12.5%; padding: 0; vertical-align: middle; font-size: 0.8vh;"></td>
+                    <td class="table-row" style="width: 6.5%; height: 12.5%; padding: 0; vertical-align: middle; font-size: 0.8vh;"><b id=machineData${col}${row} style="color: #00B050"></b><b id=machineDataUnit${col}${row}></b></td>
                 `)
             }
         }
     }
-    $('#machineData14').text('Stack O2 %')
-    $('#machineData14').css('padding-right', '2%')
+    if (num == 1) {
+        $('#machineData14').text('Y5')
+        $('#machineData14').css('padding-right', '2%')
+        $('#machineDataUnit14').text('%')
 
-    $('#machineData42').text('Pre CO ppm')
-    $('#machineData43').text('Pre U O2 %')
+        $('#machineData42').text('Y4')
+        $('#machineData42').css('padding-right', '2%')
+        $('#machineDataUnit42').text('ppm')
 
-    $('#machineData51').text('공기비')
-    $('#machineData52').text('온도')
+        $('#machineData43').text('Y1')
+        $('#machineData43').css('padding-right', '2%')
+        $('#machineDataUnit43').text('%')
 
-    $('#machineData61').text('Z1 AR')
-    $('#machineData62').text('Z1 T C')
+        $('#machineDataUnit51').text('공기비')
+        $('#machineDataUnit52').text('온도')
 
-    $('#machineData71').text('Z2 AR')
-    $('#machineData72').text('Z2 T C')
-    $('#machineData77').text('공기비')
-    $('#machineData78').text('온도')
+        $('#machineDataUnit57').text('공기비')
+        $('#machineDataUnit58').text('온도')
 
-    $('#machineData81').text('Z4 AR')
-    $('#machineData82').text('Z4 T C')
-    $('#machineData87').text('Z3 AR')
-    $('#machineData88').text('Z3 T C')
+        $('#machineData61').text('X30')
 
-    $('#machineData91').text('Z6 AR')
-    $('#machineData92').text('Z6 T C')
-    $('#machineData97').text('Z5 AR')
-    $('#machineData98').text('Z5 T C')
+        $('#machineData62').text('X2')
+        $('#machineData62').css('padding-right', '2%')
+        $('#machineDataUnit62').append('&#8451;')
 
-    $('#machineData101').text('Z7 AR')
-    $('#machineData102').text('Z7 T C')
+        $('#machineData63').text('Y2')
+        $('#machineData63').css('padding-right', '2%')
+        $('#machineDataUnit63').text('%')
 
-    $('#machineData112').text('Z8 AR')
-    $('#machineData113').text('Z8 T C')
-    $('#machineData117').text('Stack O2 %')
+        $('#machineData67').text('X31')
 
+        $('#machineData68').text('X4')
+        $('#machineData68').css('padding-right', '2%')
+        $('#machineDataUnit68').append('&#8451;')
+
+        $('#machineData81').text('X32')
+
+        $('#machineData82').text('X6')
+        $('#machineData82').css('padding-right', '2%')
+        $('#machineDataUnit82').append('&#8451;')
+
+        $('#machineData87').text('X33')
+
+        $('#machineData88').text('X8')
+        $('#machineData88').css('padding-right', '2%')
+        $('#machineDataUnit88').append('&#8451;')
+
+        $('#machineData101').text('X34')
+
+        $('#machineData102').text('X10')
+        $('#machineData102').css('padding-right', '2%')
+        $('#machineDataUnit102').append('&#8451;')
+
+        $('#machineData103').text('Y3')
+        $('#machineData103').css('padding-right', '2%')
+        $('#machineDataUnit103').append('%')
+
+        $('#machineData111').text('X35')
+
+        $('#machineData112').text('X12')
+        $('#machineData112').css('padding-right', '2%')
+        $('#machineDataUnit112').append('&#8451;')
+
+        $('#machineData117').text('X36')
+
+        $('#machineData118').text('X14')
+        $('#machineData118').css('padding-right', '2%')
+        $('#machineDataUnit118').append('&#8451;')
+    } else if (num == 2) {
+        $('#machineData14').text('Y5')
+        $('#machineData14').css('padding-right', '2%')
+        $('#machineDataUnit14').text('%')
+
+        $('#machineData42').text('Y4')
+        $('#machineData42').css('padding-right', '2%')
+        $('#machineDataUnit42').text('ppm')
+
+        $('#machineData43').text('Y1')
+        $('#machineData43').css('padding-right', '2%')
+        $('#machineDataUnit43').text('%')
+
+        $('#machineDataUnit51').text('공기비')
+        $('#machineDataUnit52').text('온도')
+
+        $('#machineDataUnit57').text('공기비')
+        $('#machineDataUnit58').text('온도')
+
+        $('#machineData61').text('X41')
+
+        $('#machineData62').text('X4')
+        $('#machineData62').css('padding-right', '2%')
+        $('#machineDataUnit62').append('&#8451;')
+
+        $('#machineData63').text('Y2')
+        $('#machineData63').css('padding-right', '2%')
+        $('#machineDataUnit63').text('%')
+
+        $('#machineData67').text('X42')
+
+        $('#machineData68').text('X6')
+        $('#machineData68').css('padding-right', '2%')
+        $('#machineDataUnit68').append('&#8451;')
+
+        $('#machineData81').text('X43')
+
+        $('#machineData82').text('X8')
+        $('#machineData82').css('padding-right', '2%')
+        $('#machineDataUnit82').append('&#8451;')
+
+        $('#machineData87').text('X44')
+
+        $('#machineData88').text('X10')
+        $('#machineData88').css('padding-right', '2%')
+        $('#machineDataUnit88').append('&#8451;')
+
+        $('#machineData101').text('X45')
+
+        $('#machineData102').text('X12')
+        $('#machineData102').css('padding-right', '2%')
+        $('#machineDataUnit102').append('&#8451;')
+
+        $('#machineData103').text('Y3')
+        $('#machineData103').css('padding-right', '2%')
+        $('#machineDataUnit103').append('%')
+
+        $('#machineData107').text('X47')
+
+        $('#machineData108').text('X16')
+        $('#machineData108').css('padding-right', '2%')
+        $('#machineDataUnit108').append('&#8451;')
+
+        $('#machineData111').text('X46')
+
+        $('#machineData112').text('X14')
+        $('#machineData112').css('padding-right', '2%')
+        $('#machineDataUnit112').append('&#8451;')
+
+        $('#machineData117').text('X48')
+
+        $('#machineData118').text('X18')
+        $('#machineData118').css('padding-right', '2%')
+        $('#machineDataUnit118').append('&#8451;')
+    } else if (num == 3) {
+        $('#machineData43').text('Y1')
+        $('#machineData43').css('padding-right', '2%')
+        $('#machineDataUnit43').text('%')
+
+        $('#machineData47').text('Y4')
+        $('#machineData47').css('padding-right', '2%')
+        $('#machineDataUnit47').text('ppm')
+        $('#machineData48').text('Y5')
+        $('#machineData48').css('padding-right', '2%')
+        $('#machineDataUnit48').text('%')
+
+        $('#machineDataUnit51').text('공기비')
+        $('#machineDataUnit52').text('온도')
+
+        $('#machineDataUnit57').text('공기비')
+        $('#machineDataUnit58').text('온도')
+
+        $('#machineData61').text('X40')
+
+        $('#machineData62').text('X3')
+        $('#machineData62').css('padding-right', '2%')
+        $('#machineDataUnit62').append('&#8451;')
+
+        $('#machineData63').text('Y2')
+        $('#machineData63').css('padding-right', '2%')
+        $('#machineDataUnit63').text('%')
+
+        $('#machineData67').text('X41')
+
+        $('#machineData68').text('X5')
+        $('#machineData68').css('padding-right', '2%')
+        $('#machineDataUnit68').append('&#8451;')
+
+        $('#machineData81').text('X42')
+
+        $('#machineData82').text('X7')
+        $('#machineData82').css('padding-right', '2%')
+        $('#machineDataUnit82').append('&#8451;')
+
+        $('#machineData87').text('X43')
+
+        $('#machineData88').text('X9')
+        $('#machineData88').css('padding-right', '2%')
+        $('#machineDataUnit88').append('&#8451;')
+
+        $('#machineData101').text('X44')
+
+        $('#machineData102').text('X11')
+        $('#machineData102').css('padding-right', '2%')
+        $('#machineDataUnit102').append('&#8451;')
+
+        $('#machineData103').text('Y3')
+        $('#machineData103').css('padding-right', '2%')
+        $('#machineDataUnit103').append('%')
+
+        $('#machineData107').text('X46')
+
+        $('#machineData108').text('X15')
+        $('#machineData108').css('padding-right', '2%')
+        $('#machineDataUnit108').append('&#8451;')
+
+        $('#machineData111').text('X45')
+
+        $('#machineData112').text('X13')
+        $('#machineData112').css('padding-right', '2%')
+        $('#machineDataUnit112').append('&#8451;')
+
+        $('#machineData117').text('X47')
+
+        $('#machineData118').text('X17')
+        $('#machineData118').css('padding-right', '2%')
+        $('#machineDataUnit118').append('&#8451;')
+    } else {
+        $('#machineData14').text('Y5')
+        $('#machineData14').css('padding-right', '2%')
+        $('#machineDataUnit14').text('%')
+
+        $('#machineData42').text('Y4')
+        $('#machineData42').css('padding-right', '2%')
+        $('#machineDataUnit42').text('ppm')
+
+        $('#machineData43').text('Y1')
+        $('#machineData43').css('padding-right', '2%')
+        $('#machineDataUnit43').text('%')
+
+        $('#machineDataUnit61').text('공기비')
+        $('#machineDataUnit62').text('온도')
+
+        $('#machineData63').text('Y2')
+        $('#machineData63').css('padding-right', '2%')
+        $('#machineDataUnit63').text('%')
+
+        $('#machineDataUnit67').text('공기비')
+        $('#machineDataUnit68').text('온도')
+
+        $('#machineData71').text('X35')
+
+        $('#machineData72').text('X3')
+        $('#machineData72').css('padding-right', '2%')
+        $('#machineDataUnit72').append('&#8451;')
+
+        $('#machineData77').text('X36')
+
+        $('#machineData78').text('X5')
+        $('#machineData78').css('padding-right', '2%')
+        $('#machineDataUnit78').append('&#8451;')
+
+        $('#machineData91').text('X37')
+
+        $('#machineData92').text('X7')
+        $('#machineData92').css('padding-right', '2%')
+        $('#machineDataUnit92').append('&#8451;')
+
+        $('#machineData97').text('X38')
+
+        $('#machineData98').text('X9')
+        $('#machineData98').css('padding-right', '2%')
+        $('#machineDataUnit98').append('&#8451;')
+
+        $('#machineData101').text('X39')
+
+        $('#machineData102').text('X11')
+        $('#machineData102').css('padding-right', '2%')
+        $('#machineDataUnit102').append('&#8451;')
+
+        $('#machineData103').text('Y3')
+        $('#machineData103').css('padding-right', '2%')
+        $('#machineDataUnit103').append('%')
+
+        $('#machineData107').text('X41')
+
+        $('#machineData108').text('X15')
+        $('#machineData108').css('padding-right', '2%')
+        $('#machineDataUnit108').append('&#8451;')
+
+        $('#machineData111').text('X40')
+
+        $('#machineData112').text('X13')
+        $('#machineData112').css('padding-right', '2%')
+        $('#machineDataUnit112').append('&#8451;')
+
+        $('#machineData117').text('X42')
+
+        $('#machineData118').text('X17')
+        $('#machineData118').css('padding-right', '2%')
+        $('#machineDataUnit118').append('&#8451;')
+    }
 }
 
 async function fetchData() {
@@ -260,13 +517,22 @@ async function fetchData() {
             }
         })
 
+    await fetch('/data/raw_data_temp?'
+        + new URLSearchParams({
+            num_machine: sel,
+            date_time: dateTime,
+        }))
+        .then(response => response.json())
+        .then(jsonData => {
+            raw_data_temp_data = jsonData.data
+        })
     
     await drawO2ControllerStateTable()
     await updateTempMonitoringChartData()
+    await drawAirRatioTable()
     await drawTdlsStatusTable()
     await updateO2COHistogramData()
-    await updateTempMonitoringChartData()
-    await drawAirRatioTable()
+    await updateMachineDataTable(sel)
     await updateTdlsGraphData(1, chart1_sel)
     await updateTdlsGraphData(2, chart2_sel)
 }
@@ -419,6 +685,97 @@ async function updateTdlsGraphData(num, idx) {
     }
 }
 
+async function updateMachineDataTable(sel) {
+    if (sel == 1) {
+        $('#machineData14').text(raw_data_tdls_data.y5)
+        $('#machineData42').text(raw_data_tdls_data.y4)
+        $('#machineData43').text(raw_data_tdls_data.y1)
+        $('#machineData103').text(raw_data_tdls_data.y3)
+        $('#machineData61').text(air_ratio_data.z1)
+        $('#machineData67').text(air_ratio_data.z2)
+        $('#machineData81').text(air_ratio_data.z3)
+        $('#machineData87').text(air_ratio_data.z4)
+        $('#machineData101').text(air_ratio_data.z5)
+        $('#machineData111').text(air_ratio_data.z6)
+        $('#machineData117').text(air_ratio_data.z7)
+        $('#machineData62').text(raw_data_temp_data.X2.toFixed(2))
+        $('#machineData68').text(raw_data_temp_data.X4.toFixed(2))
+        $('#machineData82').text(raw_data_temp_data.X6.toFixed(2))
+        $('#machineData88').text(raw_data_temp_data.X8.toFixed(2))
+        $('#machineData102').text(raw_data_temp_data.X10.toFixed(2))
+        $('#machineData112').text(raw_data_temp_data.X12.toFixed(2))
+        $('#machineData118').text(raw_data_temp_data.X14.toFixed(2))
+    } else if (sel == 2) {
+        console.log(raw_data_temp_data)
+        $('#machineData14').text(raw_data_tdls_data.y5)
+        $('#machineData42').text(raw_data_tdls_data.y4)
+        $('#machineData43').text(raw_data_tdls_data.y1)
+        $('#machineData63').text(raw_data_tdls_data.y2)
+        $('#machineData103').text(raw_data_tdls_data.y3)
+        $('#machineData61').text(air_ratio_data.z1)
+        $('#machineData67').text(air_ratio_data.z2)
+        $('#machineData81').text(air_ratio_data.z3)
+        $('#machineData87').text(air_ratio_data.z4)
+        $('#machineData101').text(air_ratio_data.z5)
+        $('#machineData107').text(air_ratio_data.z6)
+        $('#machineData111').text(air_ratio_data.z7)
+        $('#machineData117').text(air_ratio_data.z8)
+        $('#machineData62').text(raw_data_temp_data.X4)
+        $('#machineData68').text(raw_data_temp_data.X6)
+        $('#machineData82').text(raw_data_temp_data.X8)
+        $('#machineData88').text(raw_data_temp_data.X10)
+        $('#machineData102').text(raw_data_temp_data.X12)
+        $('#machineData112').text(raw_data_temp_data.X14)
+        $('#machineData108').text(raw_data_temp_data.X16)
+        $('#machineData118').text(raw_data_temp_data.X18)
+    } else if (sel == 3) {
+        console.log(raw_data_temp_data)
+        $('#machineData48').text(raw_data_tdls_data.y5)
+        $('#machineData47').text(raw_data_tdls_data.y4)
+        $('#machineData43').text(raw_data_tdls_data.y1)
+        $('#machineData63').text(raw_data_tdls_data.y2)
+        $('#machineData103').text(raw_data_tdls_data.y3)
+        $('#machineData61').text(air_ratio_data.z1)
+        $('#machineData67').text(air_ratio_data.z2)
+        $('#machineData81').text(air_ratio_data.z3)
+        $('#machineData87').text(air_ratio_data.z4)
+        $('#machineData101').text(air_ratio_data.z5)
+        $('#machineData107').text(air_ratio_data.z6)
+        $('#machineData111').text(air_ratio_data.z7)
+        $('#machineData117').text(air_ratio_data.z8)
+        $('#machineData62').text(raw_data_temp_data.X3)
+        $('#machineData68').text(raw_data_temp_data.X5)
+        $('#machineData82').text(raw_data_temp_data.X7)
+        $('#machineData88').text(raw_data_temp_data.X9)
+        $('#machineData102').text(raw_data_temp_data.X11)
+        $('#machineData112').text(raw_data_temp_data.X13)
+        $('#machineData108').text(raw_data_temp_data.X15)
+        $('#machineData118').text(raw_data_temp_data.X17)
+    } else {
+        $('#machineData14').text(raw_data_tdls_data.y5)
+        $('#machineData42').text(raw_data_tdls_data.y4)
+        $('#machineData43').text(raw_data_tdls_data.y1)
+        $('#machineData63').text(raw_data_tdls_data.y2)
+        $('#machineData103').text(raw_data_tdls_data.y3)
+        $('#machineData71').text(air_ratio_data.z1)
+        $('#machineData77').text(air_ratio_data.z2)
+        $('#machineData91').text(air_ratio_data.z3)
+        $('#machineData97').text(air_ratio_data.z4)
+        $('#machineData101').text(air_ratio_data.z5)
+        $('#machineData107').text(air_ratio_data.z6)
+        $('#machineData111').text(air_ratio_data.z7)
+        $('#machineData117').text(air_ratio_data.z8)
+        $('#machineData72').text(raw_data_temp_data.X3)
+        $('#machineData78').text(raw_data_temp_data.X5)
+        $('#machineData92').text(raw_data_temp_data.X7)
+        $('#machineData98').text(raw_data_temp_data.X9)
+        $('#machineData102').text(raw_data_temp_data.X11)
+        $('#machineData112').text(raw_data_temp_data.X13)
+        $('#machineData108').text(raw_data_temp_data.X15)
+        $('#machineData118').text(raw_data_temp_data.X17)
+    }
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -442,7 +799,7 @@ async function setTimerRoutine() {
 
 $(document).ready(async function() {
     makeAirRatioTableRows()
-    makeMachineDataTableRows()
+    makeMachineDataTableRows(sel)
 
     await google.charts.load('current', {packages:['bar']})
     await google.charts.load('visualization', 'current', {packages: ['corechart']})
