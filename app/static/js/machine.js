@@ -1,11 +1,12 @@
-var temp_monitoring_chart
-var temp_monitoring_chart_data_table
-var o2_co_histogram_chart
-var o2_co_histogram_chart_data
-var o2_co_histogram_chart_data_table
-var tdls_graph_1, tdls_graph_2
-var analyer_pred_graph_data, raw_data_graph_data
-var tdls_graph_data_table_1, tdls_graph_data_table_2
+import {Chart} from "../js/chartjs/auto/auto.js"
+
+var analyzer_pred_graph_data, raw_data_graph_data
+var lineGraph1, lineGraph2
+var lineGraphCtx1, lineGraphCtx2
+var barGraph
+var barGraphCtx
+var scatterGraph
+var scatterGraphCtx
 
 var analyzer_seva_data
 var temp_monitoring_data
@@ -19,72 +20,94 @@ var raw_data_temp_data
 
 var chart1_sel = 0, chart2_sel = 0
 
-const temp_monitoring_chart_option = {
-    legend: {position: 'none'},
-	backgroundColor: '#000000',
-    series: {
-        0: {color: '#FFC000', visibleInLegend: false}
+var barGraphOption = {
+    indexAxis: 'y',
+    responsive: false,
+    scales: {
+        y: {
+            border: {
+                display: true,
+                color: 'white',
+            },
+            ticks: {
+                color: 'white',
+                beginAtZero: true,
+            },
+        },
+        x: {
+            border: {
+                display: true,
+                color: 'white'
+            },
+            ticks: {
+                color: 'white',
+                beginAtZero: true,
+            },
+        }
     },
-    chartArea: {width: '80%', top: '10%', bottom: '10%', left: '10%', right: '10%'},
-    hAxis: {
-        titleTextStyle:{color: '#FFFFFF'},
-        textStyle:{color: '#FFFFFF'},
-		baselineColor: '#FFFFFF',
-        gridlines: {color: 'transparent'},
-    },
-    vAxis: {
-        titleTextStyle:{color: '#FFFFFF'},
-        textStyle:{color: '#FFFFFF'},
-		baselineColor: '#FFFFFF',
-        gridlines: {color: 'transparent'},
-    },
-    bars: 'horizontal'
-};
-
-const o2_co_histogram_chart_option = {
-    hAxis: {
-        title: 'O2', 
-        minValue: 0,
-        maxValue: 21,
-        textStyle: {color: '#FFF'}, 
-        baselineColor: '#FFF', 
-        gridlines: {color: 'transparent'}},
-    vAxis: {
-        title: 'CO', 
-        minValue: 0,
-        maxValue: 3000,
-        textStyle: {color: '#FFF'}, 
-        baselineColor: '#FFF', 
-        gridlines: {color: 'transparent'}},
-    legend: {
-        position: 'topLeft',
-        textStyle: {color: '#FFFFFF'}
-    },
-    backgroundColor: 'none',
-    chartArea: {width: '90%', left: '15%', right: '20%'},
-    series: {
-        0: { color: '#F5C242'}
+    plugins: {
+        legend: {display: false}
     }
 }
 
-const tdls_graph_options = {
-    chartArea: {width: '100%', left: '5%', right: '5%'},
-	legend: {position: 'none'},
-	hAxis: {
-	  textStyle: {color: 'transparent'},
-	  gridlines: {color: 'transparent'},
-	  baselineColor: '#FFF',
-	},
-	vAxis: {
-	  textStyle:{color: '#FFF'},
-	  gridlines: {color: 'transparent'},
-	  baselineColor: '#FFF',
-	},
-	backgroundColor: '#000000',
-	series: {
-		0: { color: '#0100FF' },
-		1: { color: '#B12418' }
-	}
+var lineGraphOption = {
+    elements: {
+      point: {
+        radius: 0.5,
+      },
+    },
+    responsive: false,
+    scales: { 
+      y: {
+        border: {
+          display: true,
+          color: 'white',
+        },
+        ticks: { color: 'white', beginAtZero: true },
+      },
+      x: {
+        border: {
+          display: true,
+          color: 'white',
+        },
+        ticks: { display: false },
+      },
+    },
+    plugins: {
+      legend: {position: 'top', align: 'end'},
+    }
+}
+
+var scatterGraphOption = {
+    elements: {
+        point: {
+          radius: 5,
+        },
+      },
+    responsive: false,
+    scales: { 
+      y: {
+        border: {
+          display: true,
+          color: 'white',
+        },
+        ticks: { color: 'white', beginAtZero: true },
+        min: 0,
+        max: 21,
+      },
+      x: {
+        border: {
+          display: true,
+          color: 'white',
+        },
+        ticks: { color: 'white', beginAtZero: true },
+        min: 0,
+        max: 3000,
+      },
+    },
+    plugins: {
+      legend: {position: 'right', align: 'start'},
+    }
 }
 
 function makeAirRatioTableRows() {
@@ -94,7 +117,7 @@ function makeAirRatioTableRows() {
     } else {
         rowLen = 8
     }
-    for (row=1 ; row<=rowLen; row++) {
+    for (let row=1 ; row<=rowLen; row++) {
         $('#air-ratio-table').find('tbody').append(`
             <tr>
                 <th class="table-row" style="padding: 0; vertical-align: middle; font-size: 1.8vh;">z#${row}</th>
@@ -104,9 +127,9 @@ function makeAirRatioTableRows() {
 }
 
 function makeMachineDataTableRows(num) {
-    for (row=1 ; row<=8 ; row++) {
+    for (let row=1 ; row<=8 ; row++) {
         $('#machine-data-table').append('<tr style="width: 100%">')
-        for (col=1 ; col<=13 ; col++) {
+        for (let col=1 ; col<=13 ; col++) {
             if (col == 1) {
                 $('#machine-data-table').append(`
                     <td class="table-row" style="width: 10%; height: 12.5%; padding: 0; vertical-align: middle; font-size: 0.8vh;"><b id=machineData${col}${row} style="color: #00B050"></b><b id=machineDataUnit${col}${row}></b></td>
@@ -537,29 +560,31 @@ async function fetchData() {
     await updateTdlsGraphData(2, chart2_sel)
 }
 
-async function initGoogleCharts() {
-    temp_monitoring_chart = await new google.visualization.BarChart(document.getElementById('temp_monitoring_chart'))
-    temp_monitoring_chart_data_table = await new google.visualization.DataTable()
-    temp_monitoring_chart_data_table.addColumn('string', '')
-    temp_monitoring_chart_data_table.addColumn('number', 'temp')
-    temp_monitoring_chart_data_table.addColumn({role: 'style'})
+async function initCharts () {
+    lineGraphCtx1 = document.getElementById('selected-chart-1')
+    lineGraphCtx2 = document.getElementById('selected-chart-2')
+    barGraphCtx = document.getElementById('temp_monitoring_chart')
+    scatterGraphCtx = document.getElementById('o2_co_histogram_chart')
 
-    o2_co_histogram_chart = await new google.visualization.ScatterChart(document.getElementById('o2_co_histogram_chart'))
-    o2_co_histogram_chart_data_table = await new google.visualization.DataTable()
-    o2_co_histogram_chart_data_table.addColumn('number', 'O2')
-    o2_co_histogram_chart_data_table.addColumn('number', '현재값')
+    let lineGraphData = {
+        labels: [],
+        datasets: [],
+    }
+    let barGraphData = {
+        labels: ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8'],
+        datasets: [],
+    }
+    let scatterGraphData = {
+        datasets: [],
+    }
 
-    tdls_graph_1 = await new google.visualization.LineChart(document.getElementById('selected-chart-1'))
-    tdls_graph_data_table_1 = await new google.visualization.DataTable()
-    tdls_graph_data_table_1.addColumn('string', 'timestamp')
-    tdls_graph_data_table_1.addColumn('number', '예측값')
-    tdls_graph_data_table_1.addColumn('number', '측정값')
-
-    tdls_graph_2 = await new google.visualization.LineChart(document.getElementById('selected-chart-2'))
-    tdls_graph_data_table_2 = await new google.visualization.DataTable()
-    tdls_graph_data_table_2.addColumn('string', 'timestamp')
-    tdls_graph_data_table_2.addColumn('number', '예측값')
-    tdls_graph_data_table_2.addColumn('number', '측정값')
+    let lineGraphConfig = {type: 'line', options: lineGraphOption, data: lineGraphData}
+    let barGraphConfig = {type: 'bar', options: barGraphOption, data: barGraphData}
+    let scatterGraphConfig = {type: 'scatter', options: scatterGraphOption, data: scatterGraphData}
+    lineGraph1 = new Chart(lineGraphCtx1, lineGraphConfig)
+    lineGraph2 = new Chart(lineGraphCtx2, lineGraphConfig)
+    barGraph = new Chart(barGraphCtx, barGraphConfig)
+    scatterGraph = new Chart(scatterGraphCtx, scatterGraphConfig)
 }
 
 async function drawTdlsStatusTable() {
@@ -607,80 +632,81 @@ async function drawAirRatioTable() {
 }
 
 async function updateTempMonitoringChartData() {
-    try {
-        temp_monitoring_chart_data_table.removeRows(0, temp_monitoring_chart_data_table.getNumberOfRows())
-    } catch {}
+    const labels = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8']
 
-    temp_monitoring_chart_data_table.addRows([
-        ['t1', temp_monitoring_data.t1, '#7EEF30'], ['t2', temp_monitoring_data.t2, '#7EEF30'], 
-        ['t3', temp_monitoring_data.t3, '#7EEF30'], ['t4', temp_monitoring_data.t4, '#7EEF30'], 
-        ['t5', temp_monitoring_data.t5, '#7EEF30'], ['t6', temp_monitoring_data.t6, '#7EEF30'], 
-        ['t7', temp_monitoring_data.t7, '#7EEF30'], ['t8', temp_monitoring_data.t8, '#7EEF30'], 
-    ])
-
-    temp_monitoring_chart.draw(temp_monitoring_chart_data_table, temp_monitoring_chart_option)
+    let barGraphData = {
+        labels: labels,
+        datasets: [
+            {
+                data: labels.map(row => temp_monitoring_data[row]),
+                backgroundColor: 'rgba(127, 240, 48)',
+            }
+        ]
+    }
+    barGraph.config.data = barGraphData
+    barGraph.update()
 }
 
 async function updateO2COHistogramData() {
-    try {
-        o2_co_histogram_chart_data_table.removeRows(0, o2_co_histogram_chart_data_table.getNumberOfRows())
-    } catch {}
-
-    o2_co_histogram_chart_data_table.addRow(
-        [analyzer_seva_data.y4, analyzer_seva_data.y1]
-    )
-
-    o2_co_histogram_chart.draw(o2_co_histogram_chart_data_table, o2_co_histogram_chart_option)
+    let scatterGraphData = {
+        datasets: [{
+            label: '현재값',
+            data: [{
+                x: analyzer_seva_data.y1,
+                y: analyzer_seva_data.y4,
+            }],
+            backgroundColor: 'rgba(245, 194, 66)'
+        }]
+    }
+    scatterGraph.config.data = scatterGraphData
+    scatterGraph.update()
 }
 
 async function updateTdlsGraphData(num, idx) {
     if (idx > 0) {
-        if (num == 1) {
-            try {
-                tdls_graph_data_table_1.removeRows(0, tdls_graph_data_table_1.getNumberOfRows())
-            } catch {}
-    
-            const key = `y${idx}`
-            for (i=0 ; i<analyer_pred_graph_data.length ; i++) {
-                if (raw_data_graph_data[i][key] != '') {
-                    tdls_graph_data_table_1.addRow(
-                        [analyer_pred_graph_data[i].DateTime, 
-                        analyer_pred_graph_data[i][key], 
-                        raw_data_graph_data[i][key]]
-                    )
-                }
-            }
-    
-            tdls_graph_1.draw(tdls_graph_data_table_1, tdls_graph_options)
+        const key = `y${idx}`
+        let dateTimeTemp = [], rawDataTemp = []
+        raw_data_graph_data.map(row => {
+            dateTimeTemp.push(row.DateTime)
+            rawDataTemp.push(row[key])
+        })
+        let lineGraphData = {
+            labels: dateTimeTemp,
+            datasets: [
+              {
+                label: '측정',
+                data: rawDataTemp,
+                backgroundColor: 'rgba(1, 0, 255)',
+                borderColor: 'rgba(1, 0, 255)',
+                borderWidth: 1,
+              },
+              {
+                label: '예측',
+                data: analyzer_pred_graph_data.map(row => row[key]),
+                backgroundColor: 'rgba(177, 36, 24)',
+                borderColor: 'rgba(177, 36, 24)',
+                borderWidth: 1,
+              }
+            ]
+        }
+        if (num == 1) {            
+              lineGraph1.config.data = lineGraphData
+              lineGraph1.update()
         } else {
-            try {
-                tdls_graph_data_table_2.removeRows(0, tdls_graph_data_table_2.getNumberOfRows())
-            } catch {}
-    
-            const key = `y${idx}`
-            for (i=0 ; i<analyer_pred_graph_data.length ; i++) {
-                if (raw_data_graph_data[i][key] != '') {
-                    tdls_graph_data_table_2.addRow(
-                        [analyer_pred_graph_data[i].DateTime, 
-                        analyer_pred_graph_data[i][key], 
-                        raw_data_graph_data[i][key]]
-                    )
-                }
-            }
-    
-            tdls_graph_2.draw(tdls_graph_data_table_2, tdls_graph_options)
+              lineGraph2.config.data = lineGraphData
+              lineGraph2.update()
         }
     } else {
+        let lineGraphData = {
+            labels: [],
+            datasets: [],
+        }
         if (num == 1) {
-            try {
-                tdls_graph_data_table_1.removeRows(0, tdls_graph_data_table_1.getNumberOfRows())
-            } catch {}
-            tdls_graph_1.draw(tdls_graph_data_table_1, tdls_graph_options)
+            lineGraph1.config.data = lineGraphData
+            lineGraph1.update()
         } else {
-            try {
-                tdls_graph_data_table_2.removeRows(0, tdls_graph_data_table_2.getNumberOfRows())
-            } catch {}
-            tdls_graph_2.draw(tdls_graph_data_table_2, tdls_graph_options)
+            lineGraph2.config.data = lineGraphData
+            lineGraph2.update()
         }
     }
 }
@@ -801,9 +827,7 @@ $(document).ready(async function() {
     makeAirRatioTableRows()
     makeMachineDataTableRows(sel)
 
-    await google.charts.load('current', {packages:['bar']})
-    await google.charts.load('visualization', 'current', {packages: ['corechart']})
-    await google.charts.setOnLoadCallback(initGoogleCharts)
+    await initCharts()
 
     await fetchData()
 
@@ -811,19 +835,17 @@ $(document).ready(async function() {
 })
 
 $(window).resize(function() {
-    temp_monitoring_chart.draw(temp_monitoring_chart_data_table, temp_monitoring_chart_option)
-    o2_co_histogram_chart.draw(o2_co_histogram_chart_data_table, o2_co_histogram_chart_option)
-    tdls_graph_1.draw(tdls_graph_data_table_1, tdls_graph_options)
-    tdls_graph_2.draw(tdls_graph_data_table_2, tdls_graph_options)
+    lineGraph1.update()
+    lineGraph2.update()
+    barGraph.update()
+    scatterGraph.update()
 })
 
-
-async function onSelectChart(idx, text, num) {
-    if (num == 1) {
-        chart1_sel = idx
-    } else {
-        chart2_sel = idx
-    }
+$('#select1').on('change', async function() {
+    const idx = this.selectedIndex
+    const text = this.options[this.selectedIndex].text
+    
+    chart1_sel = idx
     
     if (idx > 0) {
         const dateTime = getDateTimeString()
@@ -835,7 +857,7 @@ async function onSelectChart(idx, text, num) {
             }))
             .then(response => response.json())
             .then(jsonData => {
-                analyer_pred_graph_data = jsonData.data
+                analyzer_pred_graph_data = jsonData.data
             })
 
         await fetch('/data/raw_data_tdls/all?' 
@@ -848,11 +870,47 @@ async function onSelectChart(idx, text, num) {
                 raw_data_graph_data = jsonData.data
             })
         
-        await updateTdlsGraphData(num, idx)
-        $(`#selected-chart-title-${num}`).text(text)
+        await updateTdlsGraphData(1, idx)
+        $('#selected-chart-title-1').text(text)
     } else {
-        await updateTdlsGraphData(num, idx)
-        $(`#selected-chart-title-${num}`).text('------')
-    }
+        await updateTdlsGraphData(1, idx)
+        $('#selected-chart-title-1').text('------')
+    }  
+})
+
+$('#select2').on('change', async function() {
+    const idx = this.selectedIndex
+    const text = this.options[this.selectedIndex].text
     
-}
+    chart2_sel = idx
+    
+    if (idx > 0) {
+        const dateTime = getDateTimeString()
+
+        await fetch('/data/analyzer_pred/all?' 
+            + new URLSearchParams({
+                num_machine: sel,
+                date_time: dateTime,
+            }))
+            .then(response => response.json())
+            .then(jsonData => {
+                analyzer_pred_graph_data = jsonData.data
+            })
+
+        await fetch('/data/raw_data_tdls/all?' 
+            + new URLSearchParams({
+                num_machine: sel,
+                date_time: dateTime,
+            }))
+            .then(response => response.json())
+            .then(jsonData => {
+                raw_data_graph_data = jsonData.data
+            })
+        
+        await updateTdlsGraphData(2, idx)
+        $('#selected-chart-title-2').text(text)
+    } else {
+        await updateTdlsGraphData(2, idx)
+        $('#selected-chart-title-2').text('------')
+    }  
+})

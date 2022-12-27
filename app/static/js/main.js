@@ -1,9 +1,12 @@
-var analyzer_seva_chart_1, analyzer_seva_chart_2
-var analyzer_seva_graph_1, analyzer_seva_graph_2, analyzer_seva_graph_3, analyzer_seva_graph_4
+import {Chart} from "../js/chartjs/auto/auto.js"
+
 var analyzer_seva_chart_data
 var analyzer_seva_graph_data
-var analyzer_seva_chart_data_table_1, analyzer_seva_chart_data_table_2
-var analyzer_seva_graph_data_table_1, analyzer_seva_graph_data_table_2, analyzer_seva_graph_data_table_3, analyzer_seva_graph_data_table_4
+var lineGraph1, lineGraph2, lineGraph3, lineGraph4
+var lineGraphCtx1, lineGraphCtx2, lineGraphCtx3, lineGraphCtx4
+var barGraph1, barGraph2
+var barGraphCtx1, barGraphCtx2
+
 var tag_desc_data
 var tdls_status_data
 var analyzer_seva_data
@@ -16,61 +19,92 @@ var sensor_pred_flag_data
 var machine_option = 1
 var sensor_fault_rank_list = []
 
-const analyzer_seva_chart_options_1 = {
-	chartArea: {width: '80%', left: '10%', right: 0},
-	legend: {position: 'none'},
-	backgroundColor: '#000',
-	seriesType: 'bars',
-	series: {5: {type: 'line'}},
-	hAxis: {
-		textStyle:{color: '#FFF'},
-		baselineColor: '#FFF',
-	},
-	vAxis: {
-		textStyle:{color: '#FFF'},
-		baselineColor: '#FFF',
-	},
-	vAxes: {
-		0: {title: 'O2 [%]', titleColor: '#FFF'},
-	}
+//------- Chart JS
+var analyzer_seva_chart_data1 = {}, analyzer_seva_chart_data2 = {}
+var barGraph1, barGraph2
+
+var barGraphOption1 = {
+	responsive: false,
+    scales: {
+      y: {
+        border: {
+          display: true,
+          color: 'white',
+        },
+        ticks: { color: 'white', beginAtZero: true },
+        title: {
+          display: true,
+          text: 'O2[%]',
+          color: 'white',
+        },
+      },
+      x: {
+        border: {
+          display: true,
+          color: 'white',
+        },
+        ticks: { color: 'white', beginAtZero: true },
+      }
+    },
+    plugins: {
+      legend: {display: false},
+    },
 }
 
-const analyzer_seva_chart_options_2 = {
-	chartArea: {width: '80%', left: '20%', right: 0},
-	legend: {position: 'none'},
-	backgroundColor: '#000',
-	seriesType: 'bars',
-	series: {5: {type: 'line'}},
-	hAxis: {
-		textStyle:{color: '#FFF'},
-		baselineColor: '#FFF',
-	},
-	vAxis: {
-		textStyle:{color: '#FFF'},
-		baselineColor: '#FFF',
-	},
-	vAxes: {
-		0: {title: 'CO [ppm]', titleColor: '#FFF'},
-	}
+var barGraphOption2 = {
+	responsive: false,
+  	scales: {
+  	  	y: {
+  	  	  	border: {
+  	  	  	  	display: true,
+  	  	  	  	color: 'white',
+  	  	  	},
+  	  	  	ticks: { color: 'white', beginAtZero: true },
+  	  	  	title: {
+  	  	  	  	display: true,
+  	  	  	  	text: 'CO[ppm]',
+  	  	  	  	color: 'white',
+  	  	  	},
+  	  	},
+  	  	x: {
+  	  	  	border: {
+  	  	  	  	display: true,
+  	  	  	  	color: 'white',
+  	  	  	},
+  	  	  	ticks: { color: 'white', beginAtZero: true },
+  	  	}
+  	},
+  	plugins: {
+  	  	legend: {display: false},
+  	}
 }
 
-const analyzer_seva_graph_options = {
-	chartArea: {width: '75%', left: '5%', right: '5%', top: '20%', bottom: '20%'},
-	legend: {position: 'none'},
-	hAxis: {
-	  textStyle: {color: 'transparent'},
-	  gridlines: {color: 'transparent'},
-	  baselineColor: '#FFF',
-	},
-	vAxis: {
-	  textStyle:{color: '#FFF'},
-	  gridlines: {color: 'transparent'},
-	  baselineColor: '#FFF',
-	},
-	backgroundColor: '#000',
-	series: {
-		0: { color: '#0100FF' }
-	}
+var lineGraphOption = {
+    elements: {
+      point: {
+        radius: 0.5,
+      },
+    },
+    responsive: false,
+    scales: { 
+      y: {
+        border: {
+          display: true,
+          color: 'white',
+        },
+        ticks: { color: 'white', beginAtZero: true },
+      },
+      x: {
+        border: {
+          display: true,
+          color: 'white',
+        },
+        ticks: { display: false },
+      },
+    },
+    plugins: {
+      legend: {display: false},
+    }
 }
 
 async function fetchData() {
@@ -80,10 +114,26 @@ async function fetchData() {
 		num_machine: 0,
 		date_time: dateTime,
 	}))
-		.then(response => response.json())
-		.then(jsonData => {
-			analyzer_seva_chart_data = jsonData
+	.then(response => response.json())
+	  .then(jsonData => {
+		analyzer_seva_chart_data = jsonData
+		Object.keys(jsonData).forEach((key) => {
+		  let temp1 = [], temp2 = []
+		  Object.keys(jsonData[key]).forEach((subKey) => {
+			if (subKey != 'DateTime' && subKey != 'y5') {
+			  temp1.push(jsonData[key][subKey])
+			} else if (subKey == 'y5') {
+			  temp2.push(jsonData[key][subKey])
+			}
+		  })
+		  if (temp1.length > 0) {
+			analyzer_seva_chart_data1[key] = temp1
+		  }
+		  if (temp2.length > 0) {
+			analyzer_seva_chart_data2[key] = temp2
+		  }
 		})
+	  })
 	
 	await fetch('/data/limit_info?' + new URLSearchParams({
 		num_machine: 0
@@ -164,7 +214,7 @@ async function fetchData() {
             sensor_pred_flag_data = jsonData.data
         })
 	
-	await updateAnalyzerSevaChartData()
+	await drawBarGraph()
 	await drawAnalyzerSevaTable()
 	await drawTdlsStatusTable()
 	await updateAnalyzerSevaGraphsData()
@@ -173,43 +223,40 @@ async function fetchData() {
 	await drawFaultStatusTable()
 }
 
+async function initCharts () {
+    barGraphCtx1 = document.getElementById('analyzer_seva_chart_1')
+    barGraphCtx2 = document.getElementById('analyzer_seva_chart_2')
+	lineGraphCtx1 = document.getElementById('analyzer_seva_graph_1')
+	lineGraphCtx2 = document.getElementById('analyzer_seva_graph_2')
+	lineGraphCtx3 = document.getElementById('analyzer_seva_graph_3')
+	lineGraphCtx4 = document.getElementById('analyzer_seva_graph_4')
 
-async function initGoogleCharts() {
-	analyzer_seva_chart_1 = await new google.visualization.ComboChart(document.getElementById('analyzer_seva_chart_1'))
-	analyzer_seva_chart_data_table_1 = await new google.visualization.DataTable()
-	analyzer_seva_chart_data_table_1.addColumn('string', 'chart_type')
-	analyzer_seva_chart_data_table_1.addColumn('number', '#1')
-	analyzer_seva_chart_data_table_1.addColumn('number', '#2')
-	analyzer_seva_chart_data_table_1.addColumn('number', '#3')
-	analyzer_seva_chart_data_table_1.addColumn('number', '#4')
+    let barGraphData1 = {
+        labels: [
+			'예열대 상부 O2',
+			'예열대 하부 O2',
+			'균열대 하부 O2',
+			'Stack O2'],
+        datasets: [],
+    }
+	let barGraphData2 = {
+        labels: ['예열대 상부 CO'],
+        datasets: [],
+    }
+	let lineGraphData = {
+		labels: [],
+		datasets: [],
+	}
 
-	analyzer_seva_chart_2 = await new google.visualization.ComboChart(document.getElementById('analyzer_seva_chart_2'))
-	analyzer_seva_chart_data_table_2 = await new google.visualization.DataTable()
-	analyzer_seva_chart_data_table_2.addColumn('string', 'chart_type')
-	analyzer_seva_chart_data_table_2.addColumn('number', '#1')
-	analyzer_seva_chart_data_table_2.addColumn('number', '#2')
-	analyzer_seva_chart_data_table_2.addColumn('number', '#3')
-	analyzer_seva_chart_data_table_2.addColumn('number', '#4')
-
-	analyzer_seva_graph_1 = await new google.visualization.LineChart(document.getElementById('analyzer_seva_graph_1'))
-	analyzer_seva_graph_data_table_1 = await new google.visualization.DataTable()
-	analyzer_seva_graph_data_table_1.addColumn('string', 'timestamp')
-	analyzer_seva_graph_data_table_1.addColumn('number', '예열대 상부 O2 %')
-
-	analyzer_seva_graph_2 = await new google.visualization.LineChart(document.getElementById('analyzer_seva_graph_2'))
-	analyzer_seva_graph_data_table_2 = await new google.visualization.DataTable()
-	analyzer_seva_graph_data_table_2.addColumn('string', 'timestamp')
-	analyzer_seva_graph_data_table_2.addColumn('number', '예열대 하부 O2 %')
-
-	analyzer_seva_graph_3 = await new google.visualization.LineChart(document.getElementById('analyzer_seva_graph_3'))
-	analyzer_seva_graph_data_table_3 = await new google.visualization.DataTable()
-	analyzer_seva_graph_data_table_3.addColumn('string', 'timestamp')
-	analyzer_seva_graph_data_table_3.addColumn('number', '균열대 하부 O2 %')
-
-	analyzer_seva_graph_4 = await new google.visualization.LineChart(document.getElementById('analyzer_seva_graph_4'))
-	analyzer_seva_graph_data_table_4 = await new google.visualization.DataTable()
-	analyzer_seva_graph_data_table_4.addColumn('string', 'timestamp')
-	analyzer_seva_graph_data_table_4.addColumn('number', '예열대 상부 CO %')
+    let barGraphConfig1 = {type: 'bar', options: barGraphOption1, data: barGraphData1}
+    let barGraphConfig2 = {type: 'bar', options: barGraphOption2, data: barGraphData2}
+	let lineGraphConfig = {type: 'line', options: lineGraphOption, data: lineGraphData}
+    barGraph1 = new Chart(barGraphCtx1, barGraphConfig1)
+    barGraph2 = new Chart(barGraphCtx2, barGraphConfig2)
+	lineGraph1 = new Chart(lineGraphCtx1, lineGraphConfig)
+	lineGraph2 = new Chart(lineGraphCtx2, lineGraphConfig)
+	lineGraph3 = new Chart(lineGraphCtx3, lineGraphConfig)
+	lineGraph4 = new Chart(lineGraphCtx4, lineGraphConfig)
 }
 
 async function drawTdlsStatusTable() {
@@ -265,7 +312,6 @@ function setDataColor(obj, val, yellow, red) {
 
 async function drawAnalyzerSevaTable() {
 	for (const [key, value] of Object.entries(analyzer_seva_chart_data)) {
-		console.log(limit_info_data)
 		$(`#analyzerSevaData${key.substring(4)}1`)
 			.text(value.y1.toFixed(2))
 		setDataColor($(`#analyzerSevaData${key.substring(4)}1`), 
@@ -296,30 +342,79 @@ async function drawAnalyzerSevaTable() {
 
 }
 
-async function updateAnalyzerSevaChartData() {
-	let data1, data2, data3, data4
-	try {
-		analyzer_seva_chart_data_table_1.removeRows(0, analyzer_seva_chart_data_table_1.getNumberOfRows())
-		analyzer_seva_chart_data_table_2.removeRows(0, analyzer_seva_chart_data_table_2.getNumberOfRows())
-		data1 = analyzer_seva_chart_data.data1
-		data2 = analyzer_seva_chart_data.data2
-		data3 = analyzer_seva_chart_data.data3
-		data4 = analyzer_seva_chart_data.data4
-	} catch {}
-
-	analyzer_seva_chart_data_table_1.addRows([
-		['예열대 상부 O2', data1.y1, data2.y1, data3.y1, data4.y1],
-		['예열대 하부 O2', data1.y2, data2.y2, data3.y2, data4.y2],
-		['균열대 하부 O2', data1.y3, data2.y3, data3.y3, data4.y3],
-		['Stack O2', data1.y5, data2.y5, data3.y5, data4.y5]
-	])
-
-	analyzer_seva_chart_data_table_2.addRows([
-		['예열대 상부 CO', data1.y4, data2.y4, data3.y4, data4.y4]
-	])
+async function drawBarGraph() {
+	let barGraphData1 = {
+	  labels: [
+		'예열대 상부 O2',
+		'예열대 하부 O2',
+		'균열대 하부 O2',
+		'Stack O2'
+	  ],
+	  datasets: [
+		{
+		  label: '#1',
+		  data: analyzer_seva_chart_data1.data1,
+		  backgroundColor: 
+			  'rgba(105, 151, 206)',          
+		},
+		{
+		  label: '#2',
+		  data: analyzer_seva_chart_data1.data2,
+		  backgroundColor: 
+			  'rgba(136, 150, 174)',
+		},
+		{
+		  label: '#3',
+		  data: analyzer_seva_chart_data1.data3,
+		  backgroundColor: 
+			  'rgba(71, 83, 104)',
+		},
+		{
+		  label: '#4',
+		  data: analyzer_seva_chart_data1.data4,
+		  backgroundColor: 
+			  'rgba(165, 194, 227)',
+		},
+	  ]
+	}
+  
+	let barGraphData2 = {
+	  labels: [
+		'예열대 상부 CO',
+	  ],
+	  datasets: [
+		{
+		  label: '#1',
+		  data: analyzer_seva_chart_data2.data1,
+		  backgroundColor: 
+			  'rgba(105, 151, 206)',          
+		},
+		{
+		  label: '#2',
+		  data: analyzer_seva_chart_data2.data2,
+		  backgroundColor: 
+			  'rgba(136, 150, 174)',
+		},
+		{
+		  label: '#3',
+		  data: analyzer_seva_chart_data2.data3,
+		  backgroundColor: 
+			  'rgba(71, 83, 104)',
+		},
+		{
+		  label: '#4',
+		  data: analyzer_seva_chart_data2.data4,
+		  backgroundColor: 
+			  'rgba(165, 194, 227)',
+		},
+	  ]
+	}
 	
-	analyzer_seva_chart_1.draw(analyzer_seva_chart_data_table_1, analyzer_seva_chart_options_1)
-	analyzer_seva_chart_2.draw(analyzer_seva_chart_data_table_2, analyzer_seva_chart_options_2)
+	barGraph1.config.data = barGraphData1
+	barGraph2.config.data = barGraphData2
+
+	barGraph1.update()
+	barGraph2.update()
 }
 
 async function drawFalutDetectionTable() {
@@ -335,7 +430,7 @@ async function drawFalutDetectionTable() {
 }
 
 async function drawFaultStatusTable() {
-	for (i=0 ; i<5 ; i++) {
+	for (let i=0 ; i<5 ; i++) {
 		$(`#faultStatusData1${i + 1}`).text('')
 		$(`#faultStatusData2${i + 1}`).text('')
 		$(`#faultStatusData3${i + 1}`).text('')
@@ -343,7 +438,7 @@ async function drawFaultStatusTable() {
 		$(`#faultStatusData5${i + 1}`).text('')
 	}
 
-	for (i=0 ; i<sensor_fault_rank_list.length ; i++) {
+	for (let i=0 ; i<sensor_fault_rank_list.length ; i++) {
 		let actual_value = sensor_fault_rank_list[i]['sensor_raw_data']
 		let predict_value = sensor_fault_rank_list[i]['predict_value']
 		$(`#faultStatusData1${i + 1}`).text(sensor_fault_rank_list[i]['tag_desc_data'].Tag)
@@ -353,32 +448,79 @@ async function drawFaultStatusTable() {
 		$(`#faultStatusData5${i + 1}`).text(sensor_fault_rank_list[i]['sensor_normal_ratio'].toFixed(2))		
 	}
 }
- 
-async function updateAnalyzerSevaGraphsData() {
-	try {
-		analyzer_seva_graph_data_table_1.removeRows(0, analyzer_seva_graph_data_table_1.getNumberOfRows())
-		analyzer_seva_graph_data_table_2.removeRows(0, analyzer_seva_graph_data_table_2.getNumberOfRows())
-		analyzer_seva_graph_data_table_3.removeRows(0, analyzer_seva_graph_data_table_3.getNumberOfRows())
-		analyzer_seva_graph_data_table_4.removeRows(0, analyzer_seva_graph_data_table_4.getNumberOfRows())
-		console.log('remove')
-	} catch {}
 
-	analyzer_seva_graph_data.forEach(element => {
-		analyzer_seva_graph_data_table_1.addRow([element.DateTime, element.y1])
-		analyzer_seva_graph_data_table_2.addRow([element.DateTime, element.y2])
-		analyzer_seva_graph_data_table_3.addRow([element.DateTime, element.y3])
-		analyzer_seva_graph_data_table_4.addRow([element.DateTime, element.y4])
+async function updateAnalyzerSevaGraphsData() {
+	let dateTimeTemp = [], dataTemp1 = [], dataTemp2 = [], dataTemp3 = [], dataTemp4 = []
+	analyzer_seva_graph_data.map(row => {
+		dateTimeTemp.push(row.DateTime)
+		dataTemp1.push(row.y1)
+		dataTemp2.push(row.y2)
+		dataTemp3.push(row.y3)
+		dataTemp4.push(row.y4)
 	})
-	
-	analyzer_seva_graph_1.draw(analyzer_seva_graph_data_table_1, analyzer_seva_graph_options)
-	analyzer_seva_graph_2.draw(analyzer_seva_graph_data_table_2, analyzer_seva_graph_options)
-	analyzer_seva_graph_3.draw(analyzer_seva_graph_data_table_3, analyzer_seva_graph_options)
-	analyzer_seva_graph_4.draw(analyzer_seva_graph_data_table_4, analyzer_seva_graph_options)
-	console.log('draw')
+
+	let lineGraphData1 = {
+		labels: dateTimeTemp,
+		datasets: [
+			{
+				label: '예열대 상부 O2',
+				data: dataTemp1,
+				backgroundColor: 'rgba(1, 0, 255)',
+				bordercolor: 'rgba(1, 0, 255)',
+				borderWidth: 5,
+			}
+		]
+	}
+	let lineGraphData2 = {
+		labels: dateTimeTemp,
+		datasets: [
+			{
+				label: '예열대 하부 O2',
+				data: dataTemp2,
+				backgroundColor: 'rgba(1, 0, 255)',
+				bordercolor: 'rgba(1, 0, 255)',
+				borderWidth: 1,
+			}
+		]
+	}
+	let lineGraphData3 = {
+		labels: dateTimeTemp,
+		datasets: [
+			{
+				label: '균열대 하부 O2',
+				data: dataTemp3,
+				backgroundColor: 'rgba(1, 0, 255)',
+				bordercolor: 'rgba(1, 0, 255)',
+				borderWidth: 1,
+			}
+		]
+	}
+	let lineGraphData4 = {
+		labels: dateTimeTemp,
+		datasets: [
+			{
+				label: '예열대 상부 CO',
+				data: dataTemp4,
+				backgroundColor: 'rgba(1, 0, 255)',
+				bordercolor: 'rgba(1, 0, 255)',
+				borderWidth: 1,
+			}
+		]
+	}
+
+	lineGraph1.config.data = lineGraphData1
+	lineGraph2.config.data = lineGraphData2
+	lineGraph3.config.data = lineGraphData3
+	lineGraph4.config.data = lineGraphData4
+	lineGraph1.update()
+	lineGraph2.update()
+	lineGraph3.update()
+	lineGraph4.update()
+	console.log('update')
 }
 
 async function updateSensorFaultRankList() {
-	temp = []
+	let temp = []
 	for (const [key, value] of Object.entries(sensor_pred_flag_data)) {
 		if (key != 'DateTime') {
 			if (value == 1) {
@@ -421,9 +563,7 @@ async function setTimerRoutine() {
 }
 
 $(document).ready(async function() {
-	await google.charts.load('current', {packages:['bar', 'line']})
-	await google.charts.load('visualization', 'current', {packages: ['corechart']})
-	await google.charts.setOnLoadCallback(initGoogleCharts)
+	await initCharts()
 
 	await fetchData()
 	
@@ -431,12 +571,12 @@ $(document).ready(async function() {
 })
 
 $(window).resize(function() {
-	analyzer_seva_chart_1.draw(analyzer_seva_chart_data_table_1, analyzer_seva_chart_options_1)
-	analyzer_seva_chart_2.draw(analyzer_seva_chart_data_table_2, analyzer_seva_chart_options_2)
-	analyzer_seva_graph_1.draw(analyzer_seva_graph_data_table_1, analyzer_seva_graph_options)
-	analyzer_seva_graph_2.draw(analyzer_seva_graph_data_table_2, analyzer_seva_graph_options)
-	analyzer_seva_graph_3.draw(analyzer_seva_graph_data_table_3, analyzer_seva_graph_options)
-	analyzer_seva_graph_4.draw(analyzer_seva_graph_data_table_4, analyzer_seva_graph_options)
+	barGraph1.update()
+	barGraph2.update()
+	lineGraph1.update()
+	lineGraph2.update()
+	lineGraph3.update()
+	lineGraph4.update()
 })
 
 $('select').on('change', async function() {

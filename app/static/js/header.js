@@ -13,7 +13,7 @@ $(document).ready(function() {
 	const type = href.substring(baseUrl.length + 2)
 	const num_machine = href.substring(baseUrl.length, baseUrl.length + 1)
 	
-	for(i=0 ; i<navList.length ; i++) {
+	for(let i=0 ; i<navList.length ; i++) {
 		if (num_machine > 0) {
 			if (navList[i].href.substring(
 				baseUrl.length, baseUrl.length + 1) == num_machine) {

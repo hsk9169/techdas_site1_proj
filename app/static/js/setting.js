@@ -3,7 +3,7 @@ var o2_co_limit_data
 var limit_info_data
 
 async function makeDataFilterTableRows() {
-    for (row=1 ; row<=tag_desc_data.length; row++) {
+    for (let row=1 ; row<=tag_desc_data.length; row++) {
         $('#data-filter-table').append(`
             <tr style="height: 1vh; width: 100%;">
                 <td id="dataFilterData1${row}" class="table-row" style="width: 60%; border: 1px solid white; padding: 1%; text-align: start; font-size: 1.5vh;"></td>
@@ -15,18 +15,18 @@ async function makeDataFilterTableRows() {
         $(`#dataFilterData4${row}`).css('background-color', '#FFFFFF')
 
         $(`#dataFilterData1${row}`).text(tag_desc_data[row - 1].Tag)
-        $(`#dataFilterData2${row}`).append($(`<input id="checkBox${row}" onchange="onChangeCheckBox(${row}, this.checked)" type="checkbox" />`))
+        $(`#dataFilterData2${row}`).append($(`<input id="checkBox${row}" type="checkbox" />`))
         if (tag_desc_data[row - 1].BandWidth == 'O') {
             $(`#checkBox${row}`).attr('checked', 'checked')
         }
-        $(`#dataFilterData3${row}`).append($(`<input id="inputHigh${row}" onchange="onChangeHighInput(${row}, this.value)" value=${tag_desc_data[row - 1].High == '' ? 'None' : tag_desc_data[row - 1].High} style="width: 100%; color: black; border: none;" />`))
-        $(`#dataFilterData4${row}`).append($(`<input id="inputLow${row}" onchange="onChangeLowInput(${row}, this.value)" value=${tag_desc_data[row - 1].Low == '' ? 'None' : tag_desc_data[row - 1].Low} style="width: 100%; color: black; border: none;" />`))
+        $(`#dataFilterData3${row}`).append($(`<input id="inputHigh${row}" value=${tag_desc_data[row - 1].High == '' ? 'None' : tag_desc_data[row - 1].High} style="width: 100%; color: black; border: none;" />`))
+        $(`#dataFilterData4${row}`).append($(`<input id="inputLow${row}" value=${tag_desc_data[row - 1].Low == '' ? 'None' : tag_desc_data[row - 1].Low} style="width: 100%; color: black; border: none;" />`))
     }
 }
 
 async function makeO2COLimitTableRows() {
     const tag = ['예열대 상부 O2', '예열대 하부 O2', '균열대 하부 O2', '예열대 상부 CO', 'Stack O2']
-    for (row=1 ; row<=5; row++) {
+    for (let row=1 ; row<=5; row++) {
         $('#o2co-limit-table').append(`
             <tr style="height: 1vh; width: 100%;">
                 <td id="o2coLimitData1${row}" class="table-row" style="width: 60%; border: 1px solid white; padding: 1%; text-align: start; font-size: 1.5vh;"></td>
@@ -40,8 +40,8 @@ async function makeO2COLimitTableRows() {
         $(`#o2coLimitData1${row}`).text(tag[row - 1])
         $(`#o2coLimitData2${row}`).append($(`<input type="checkbox" />`))
 
-        $(`#o2coLimitData3${row}`).append($(`<input id="inputYellow${row}" onchange="onChangeYellowInput(${row}, this.value)" value=${limit_info_data[row - 1].yellow == '' ? 'None' : limit_info_data[row - 1].yellow} style="width: 100%; color: black; border: none;" />`))
-        $(`#o2coLimitData4${row}`).append($(`<input id="inputRed${row}" onchange="onChangeRedInput(${row}, this.value)" value=${limit_info_data[row - 1].red == '' ? 'None' : limit_info_data[row - 1].red} style="width: 100%; color: black; border: none;" />`))
+        $(`#o2coLimitData3${row}`).append($(`<input id="inputYellow${row}" value=${limit_info_data[row - 1].yellow == '' ? 'None' : limit_info_data[row - 1].yellow} style="width: 100%; color: black; border: none;" />`))
+        $(`#o2coLimitData4${row}`).append($(`<input id="inputRed${row}" value=${limit_info_data[row - 1].red == '' ? 'None' : limit_info_data[row - 1].red} style="width: 100%; color: black; border: none;" />`))
     }
 }
 
@@ -114,39 +114,43 @@ async function drawO2ControllerStateTable() {
     }
 }
 
-function onChangeCheckBox(row, value) {
-    tag_desc_data[row - 1].BandWidth = value ? 'O' : 'X'
+function setCallbackOnInputs() {
+    for (let row=1 ; row<= tag_desc_data.length ; row++) {
+        $(`#checkBox${row}`).on('change', function() {
+            tag_desc_data[row - 1].BandWidth = this.checked ? 'O' : 'X'
+        })
+        $(`#inputHigh${row}`).on('change', function() {
+            tag_desc_data[row - 1].High = isNaN(Number(this.value)) ? '' : Number(this.value)
+        })
+        $(`#inputLow${row}`).on('change', function() {
+            tag_desc_data[row - 1].Low = isNaN(Number(this.value)) ? '' : Number(this.value)
+        })
+    }
+    for (let row=1 ; row<=limit_info_data.length ; row++) {
+        $(`#inputYellow${row}`).on('change', function() {
+            limit_info_data[row - 1].yellow = isNaN(Number(this.value)) ? '' : Number(this.value)
+        })
+        $(`#inputRed${row}`).on('change', function() {
+            limit_info_data[row - 1].red = isNaN(Number(this.value)) ? '' : Number(this.value)
+        })
+    }
 }
 
-function onChangeHighInput(row, value) {
-    tag_desc_data[row - 1].High = isNaN(Number(value)) ? '' : Number(value)
-}
-
-function onChangeLowInput(row, value) {
-    tag_desc_data[row - 1].Low = isNaN(Number(value)) ? '' : Number(value)
-}
-
-function onChangeYellowInput(row, value) {
-    limit_info_data[row - 1].yellow = isNaN(Number(value)) ? '' : Number(value)
-}
-
-function onChangeRedInput(row, value) {
-    limit_info_data[row - 1].red = isNaN(Number(value)) ? '' : Number(value)
-}
-
-async function onClickSubmitDataFilter() {
+$('#submit_data_filter_button').on('click', async function() {
     await submitTagDescData()
     await drawDataFilterTable()
-}
+})
 
-async function onClickSubmitO2COLimit() {
+$('#submit_o2_co_limit_button').on('click', async function() {
     await submitO2COLimitData()
     await drawO2ControllerStateTable()
-}
+})
 
 $(document).ready(async function() {
     await fetchData()
 
     await makeDataFilterTableRows()
     await makeO2COLimitTableRows()
+
+    setCallbackOnInputs()
 })

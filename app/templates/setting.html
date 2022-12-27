@@ -5,8 +5,7 @@
     <span class="content-row" style="width: 50%; height: 100%;">
         {% include "setting/data_filter_form.html" %}
         <div style="width: 100%; display: flex; justify-content: end; padding-top: 2%;">
-            <button type="button" class="btn btn-light" style="width: 15%; padding: 0.2%;"
-                onclick="onClickSubmitDataFilter()">
+            <button id="submit_data_filter_button" type="button" class="btn btn-light" style="width: 15%; padding: 0.2%;">
                 <b style='font-size: 2vh;'>적용</b>
             </button>
         </div>
@@ -18,8 +17,7 @@
         <div class="column-box" style="justify-content: flex-start;">
             {% include "setting/o2_co_limit_form.html" %}
             <div style="width: 100%; display: flex; justify-content: end; padding-top: 2%;">
-                <button type="button" class="btn btn-light" style="width: 15%; padding: 0.2%;"
-                    onclick="onClickSubmitO2COLimit()">
+                <button id="submit_o2_co_limit_button" type="button" class="btn btn-light" style="width: 15%; padding: 0.2%;">
                     <b style='font-size: 2vh;'>적용</b>
                 </button>
             </div>
@@ -32,5 +30,5 @@
 <script type="">
     sel = {{ num_machine|tojson }}
 </script>
-<script type="text/javascript" src="/static/js/setting.js"></script>
+<script type="module" src="/static/js/setting.js"></script>
 {% endblock %}

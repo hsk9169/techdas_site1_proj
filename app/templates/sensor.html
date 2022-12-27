@@ -4,8 +4,7 @@
 <div class="content-box" style="width: 100%;">
     <div class="column-box" style="justify-content: center; align-items: center">
         <div style="width: 100%; display: flex; justify-content: end">
-            <button type="button" class="btn btn-light btn-sm" style="width: 6%; padding: 0.2%;"
-                onclick="onClickBack()">
+            <button id='button_back' type="button" class="btn btn-light btn-sm" style="width: 6%; padding: 0.2%;">
                 <b>Back</b>
             </button>
         </div>
@@ -18,5 +17,5 @@
 <script type="">
     sel = {{ num_machine|tojson }}
 </script>
-<script type="text/javascript" src="/static/js/sensor.js"></script>
+<script type="module" src="/static/js/sensor.js"></script>
 {% endblock %}

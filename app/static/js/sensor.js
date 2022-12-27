@@ -14,7 +14,7 @@ function makeTablesRows() {
     } else {
         rowLen = 24
     }
-    for (row=1 ; row<=rowLen; row++) {
+    for (let row=1 ; row<=rowLen; row++) {
         $('#sensor-data-table').find('tbody').append(`
             <tr style="width: 100%;">
                 <th id="sensorData1${row}" class="table-row" style="padding:0; vertical-align: middle; font-size: 1.8vh;"></th>
@@ -83,7 +83,7 @@ async function fetchData() {
 }
 
 async function drawSensorDataTable() {
-    for (i=0 ; i<sensor_fault_rank_list.length ; i++) {
+    for (let i=0 ; i<sensor_fault_rank_list.length ; i++) {
         let actual_value = sensor_fault_rank_list[i]['sensor_raw_data']
 		let predict_value = sensor_fault_rank_list[i]['predict_value']
         let diff = actual_value - predict_value
@@ -107,8 +107,8 @@ async function drawSensorDataTable() {
 }
 
 async function updateSensorFaultRankList() {
-	temp_fault = []
-    temp_normal = []
+	let temp_fault = []
+    let temp_normal = []
 	for (const [key, value] of Object.entries(sensor_pred_flag_data)) {
 		if (key != 'DateTime') {
             let index = parseInt(key.substring(4))
@@ -142,9 +142,9 @@ async function updateSensorFaultRankList() {
 	sensor_fault_rank_list = temp_fault.concat(temp_normal)
 }
 
-function onClickBack() {
+$('#button_back').on('click', function() {
     window.location.href = `http://localhost:8080/${sel}/machine`
-}
+})
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
